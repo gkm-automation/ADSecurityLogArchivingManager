@@ -72,6 +72,17 @@ function Register-BackupScheduler
 #Auto Archiving the Log into Offline Database as per Schedued Task settings
 function AutoLogSyncScheduler
 {
+<#
+    .SYNOPSIS
+        This function synchronizes the security event logs for all the register backup nodes.
+
+    .DESCRIPTION
+        The AutoLogSyncScheduler function performs the log synchronization of security events for all the computers that are added to the Event Log Backup List using the Add-SecurityBackupNode cmdlet.
+    
+    .EXAMPLE
+     AutoLogSyncScheduler
+
+    #>
 #checking Database Connectivity
 Test-DatabaseConnection
 #Getting Server List from Database
@@ -102,6 +113,8 @@ foreach ($Comp in $($queryserver.machinename)){
 
 function Sync-NodeSecurityData([string]$Servername)
 {       
+    
+ 
     try {
         $oldestlog = Get-EventLog -LogName Security -ComputerName $Servername | Sort-Object -Property Timegenerated | Select-Object -First 1
         $loghistory = (Get-Date) - ($oldestlog.Timegenerated)
@@ -192,6 +205,20 @@ Function Add-SecurityBackupNode{
         [Parameter(Mandatory=$false,Position=0,HelpMessage='Enter ComputerName')]
         [string[]]$Computername = $env:COMPUTERNAME
 	)
+    <#
+    .SYNOPSIS
+        This function checks and exports Security Event Logs for a computer along with adding a record in ServerDB table of the OfflineEventsDB database in SQL server.
+
+    .DESCRIPTION
+        The Add-SecurityBackupNode function takes the ComputerName as an input parameter that you want to add to the EventLog backup in SQL server. 
+    
+    .PARAMETER ComputerName
+        Name of the remote computer for which you wish to take the EventLog Backup.
+
+    .EXAMPLE
+     Add-SecurityBackupNode -ComputerName “Office-PC-1”
+
+    #>
 #calling database check function
 Test-DatabaseConnection
 #Convert localhost to HOSTNAME
