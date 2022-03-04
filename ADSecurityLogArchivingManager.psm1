@@ -10,6 +10,18 @@ $global:Retentiondays = 1
 #Register the Task in Task Scheduler
 function Register-BackupScheduler
 {
+    
+    <#
+    .SYNOPSIS
+        This function checks if a Scheduled task already exists in the Task Scheduler and creates a new task with all the required configuration settings if it doesn’t exists.
+
+    .DESCRIPTION
+        The Register-BackupScheduler function is designed to validate the existence of a scheduled task in the Task Scheduler. On running the command, it first checks if a scheduled task named Backup_EventLog_Scheduler already exists.
+
+    .EXAMPLE
+     Register-BackupScheduler
+
+    #>
     #check for existing task name
     $checktaskexists = Get-ScheduledTaskInfo -TaskName "Backup_EventLog_Scheduler" -ErrorAction SilentlyContinue
     if($checktaskexists)
